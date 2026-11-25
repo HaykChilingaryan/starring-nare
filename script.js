@@ -122,7 +122,8 @@
     el.slate.classList.add("is-clapped");
   }
 
-  // Ping Aram's phone (ntfy.sh) when she taps the Message button or his handle.
+  // Ping Aram's phone (ntfy.sh) when she scans the ticket, taps the Message
+  // button, or taps his handle.
   // Each kind is sent once per visit. A plain-text POST with query-string options,
   // so no CORS preflight is needed, and keepalive lets it finish even though
   // she's leaving for Instagram.
@@ -143,6 +144,11 @@
         tags: "clapper,eyes",
         body: `${name} tapped @${handle} on ${location.host}. She's looking at your profile.`,
       },
+      scan: {
+        title: "The ticket was scanned!",
+        tags: "tickets,clapper",
+        body: `Someone just opened ${location.host} from the ticket's QR code. Probably ${name}.`,
+      },
     };
     const k = kinds[kind];
     const params = new URLSearchParams({ title: k.title, tags: k.tags, priority: "high" });
@@ -157,6 +163,28 @@
     } catch {
       /* never block the page on this */
     }
+  }
+
+  // The ticket's QR code points to /?qr. On arrival: notify once per browser
+  // session, then strip the marker so a reload or a shared link doesn't re-send.
+  function noteQrScan() {
+    const params = new URLSearchParams(location.search);
+    if (!params.has("qr")) return;
+    params.delete("qr");
+    const rest = params.toString();
+    try {
+      history.replaceState(null, "", location.pathname + (rest ? `?${rest}` : "") + location.hash);
+    } catch {
+      /* ignore */
+    }
+    let alreadySent = false;
+    try {
+      alreadySent = sessionStorage.getItem("qr-notified") === "1";
+      sessionStorage.setItem("qr-notified", "1");
+    } catch {
+      /* private mode etc. still sends once per page load */
+    }
+    if (!alreadySent) notify("scan");
   }
 
   function setupPostcard() {
@@ -505,6 +533,7 @@
   });
 
   applyConfig();
+  noteQrScan();
   setupPostcard();
   watchEnding();
   loadYouTube();

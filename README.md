@@ -60,6 +60,8 @@ When she taps "Message Aram on Instagram" (or his @handle), the page sends a pus
 1. Install the **ntfy** app (App Store or Google Play).
 2. Tap **+**, enter the topic from `notifyTopic` in `config.js`, and subscribe.
 
+It also fires when someone opens the site from the ticket's QR code (the QR
+points to `/?qr`; the marker is stripped from the address bar right away).
 Anyone subscribed to that topic gets it, so both of you can. The topic name is the
 only key, so don't share it. Set `notifyTopic` to `""` to turn this off.
 
@@ -69,7 +71,7 @@ only key, so don't share it. Set `notifyTopic` to `""` to turn this off.
 per page). If the domain changes, regenerate the QR code:
 
 ```bash
-python3 scripts/make_qr.py "https://new-domain.com"
+python3 scripts/make_qr.py "https://new-domain.com/?qr"
 ```
 
 …and update `siteUrl` in `config.js`.
