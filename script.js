@@ -24,6 +24,7 @@
     cueLabel: $("#cueLabel"),
     cueFill: $("#cueFill"),
     credits: $("#credits"),
+    typing: $("#typing"),
     after: $("#after"),
     skipBtn: $("#skipBtn"),
     poster: $("#poster"),
@@ -317,17 +318,39 @@
     el.cueFill.style.width = `${(unlocked ? 1 : Math.min(t / LINE_AT, 1)) * 100}%`;
 
     let current = null;
+    let shownCount = 0;
     for (const li of el.credits.children) {
       const shown = unlocked || t >= Number(li.dataset.at);
       li.classList.toggle("is-shown", shown);
-      if (shown) current = li;
+      if (shown) {
+        current = li;
+        shownCount += 1;
+      }
     }
     for (const li of el.credits.children) li.classList.toggle("is-current", li === current);
+
+    // Typing dots while the next line (or the 0:48 line) is on its way
+    el.typing.hidden = unlocked;
+    if (shownCount > lastShownCount && !unlocked && !cardOpen) followCredits();
+    lastShownCount = shownCount;
 
     if (!live || cardOpen) return;
     const reached = t >= LINE_AT - 0.4;
     if (!unlocked && reached && state() === YT_PLAYING) showCard(true);
     else if (unlocked && cardArmed && reached && t < LINE_AT + 6) showCard(false);
+  }
+
+  // Keep the newest credit line (and the dots under it) on screen.
+  // Waits for the line's reveal transition so it scrolls to where the line ends up.
+  let lastShownCount = 0;
+  let followTimer = null;
+  function followCredits() {
+    clearTimeout(followTimer);
+    followTimer = setTimeout(() => {
+      if (unlocked || cardOpen) return;
+      const target = el.typing.hidden ? el.credits.lastElementChild : el.typing;
+      if (target) target.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block: "nearest" });
+    }, REDUCED ? 0 : 1000);
   }
 
   setInterval(tick, 200);

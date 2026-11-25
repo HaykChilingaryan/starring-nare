@@ -34,7 +34,7 @@ window.FILM_CONFIG = {
     { at: 3, text: "Filmed on location at Best Buy." },
     { at: 12, text: "Previously: the same store, a few different days, a few glances." },
     { at: 21, text: "Every time, he told himself: next time I'll say something." },
-    { at: 31, text: "This is next time." },
+    { at: 31, text: "This is the NEXT time." },
     { at: 40, text: "Keep listening. The line is coming…" },
   ],
 
