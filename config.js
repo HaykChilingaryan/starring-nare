@@ -1,6 +1,6 @@
 // Everything personal lives here. Edit this file, not the HTML.
 window.FILM_CONFIG = {
-  siteUrl: "https://starring-nare.com",
+  siteUrl: "https://for-nare.com",
 
   recipientName: "Nare",
 
@@ -14,6 +14,11 @@ window.FILM_CONFIG = {
   // Left empty on purpose so his number isn't on a public page.
   phone: "",
 
+  // Push notification when she taps "Let's continue it", sent through ntfy.sh.
+  // To get it: install the free "ntfy" app, tap +, and subscribe to this topic.
+  // Leave empty to turn notifications off.
+  notifyTopic: "next-scene-cbebaf9ff30a5b0f",
+
   // The song: "SMS" by Mi Qani Hogi feat. Sebu
   youtubeId: "Y63JIH6Zu5w",
   songTitle: "SMS",
@@ -22,7 +27,6 @@ window.FILM_CONFIG = {
   // The moment the line lands, in seconds (0:48)
   lineAt: 48,
   lineArmenian: "Հլը չի սկսե կինոն մեր",
-  lineLatin: "Hly chi skse kinon mer",
   lineEnglish: "Our movie hasn't started yet.",
 
   // Opening credits that fade in while the song plays, before 0:48 (seconds)
@@ -38,7 +42,7 @@ window.FILM_CONFIG = {
   note: [
     "Okay, stepping out of the script for a second. Hi {name}, I'm {sender}.",
     "We've crossed paths at Best Buy a couple of times, and every time I walked out telling myself I'd say something next time. This is me finally doing it, just a little more dramatically than a normal person would.",
-    "I'm not asking for the whole movie. Just the next scene: a coffee together, somewhere easy where we actually get to talk. And if it's a no, that's completely okay. I'll still say hi like a normal person next time I see you.",
+    "I'm not asking for the whole movie. Just the next scene: a coffee together, somewhere easy where we actually get to talk.",
   ],
 
   // The ending: "How about we continue the movie?" and the next scene she's invited to

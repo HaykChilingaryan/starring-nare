@@ -36,7 +36,6 @@
     songLink: $("#songLink"),
     titlecard: $("#titlecard"),
     tcArm: $("#tcArm"),
-    tcLatin: $("#tcLatin"),
     tcEng: $("#tcEng"),
     tcCredit: $("#tcCredit"),
     tcContinue: $("#tcContinue"),
@@ -94,7 +93,6 @@
         return i < words.length - 1 ? [span, " "] : [span];
       })
     );
-    el.tcLatin.textContent = cfg.lineLatin || "";
 
     const eng = cfg.lineEnglish || "";
     const idx = eng.toLowerCase().lastIndexOf("yet");
@@ -108,16 +106,42 @@
 
   // ---------- The ask ----------
 
-  function clap(on) {
+  function clap() {
     el.slate.classList.remove("is-clapped");
-    if (!on) return;
     void el.slate.offsetWidth; // restart the clap
     el.slate.classList.add("is-clapped");
   }
 
+  // Ping Aram's phone (ntfy.sh) the first time she says yes.
+  // A plain-text POST with query-string options, so no CORS preflight is needed,
+  // and keepalive lets it finish even if she jumps straight to Instagram.
+  let notified = false;
+  function notifyYes() {
+    const topic = String(cfg.notifyTopic || "").trim();
+    if (!topic || notified) return;
+    notified = true;
+    const params = new URLSearchParams({
+      title: `${name} said yes!`,
+      tags: "clapper,coffee",
+      priority: "high",
+    });
+    const message = `${name} tapped "Let's continue it" on ${location.host}. Next scene: coffee.`;
+    try {
+      fetch(`https://ntfy.sh/${encodeURIComponent(topic)}?${params}`, {
+        method: "POST",
+        body: message,
+        mode: "no-cors",
+        keepalive: true,
+      }).catch(() => {});
+    } catch {
+      /* never block the page on this */
+    }
+  }
+
   function renderYes() {
     el.response.dataset.answer = "yes";
-    clap(true);
+    notifyYes();
+    clap();
 
     const box = make("div", "reply reply-yes");
     const stamp = make("span", "stamp", "Admit two");
@@ -169,28 +193,7 @@
     el.response.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block: "nearest" });
   }
 
-  function renderNo() {
-    el.response.dataset.answer = "no";
-    clap(false);
-    const box = make("div", "reply");
-    box.append(
-      make("p", "reply-title", "That's completely fair."),
-      make("p", "", "Thank you for watching this far. No awkwardness, I promise. If I see you at Best Buy, I'll just say hi like a normal person. 🙂")
-    );
-    const reset = make("button", "reply-reset", "Wait, I misclicked");
-    reset.type = "button";
-    reset.addEventListener("click", () => {
-      delete el.response.dataset.answer;
-      el.response.replaceChildren();
-    });
-    box.append(reset);
-    el.response.replaceChildren(box);
-    el.response.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block: "nearest" });
-  }
-
-  $$(".answer").forEach((btn) =>
-    btn.addEventListener("click", () => (btn.dataset.answer === "yes" ? renderYes() : renderNo()))
-  );
+  $(".answer-yes").addEventListener("click", renderYes);
 
   // ---------- Soundtrack (YouTube IFrame API) ----------
 

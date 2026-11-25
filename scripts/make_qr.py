@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate the QR code used on the printable ticket.
 
-Usage: python3 scripts/make_qr.py "https://starring-nare.com"
+Usage: python3 scripts/make_qr.py "https://for-nare.com"
 Writes assets/qr.svg (for printing) and assets/qr.png.
 """
 import sys
