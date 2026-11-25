@@ -99,7 +99,7 @@
     el.tcArm.replaceChildren(
       ...words.flatMap((w, i) => {
         const span = make("span", "w", w);
-        span.style.transitionDelay = `${0.5 + i * 0.38}s`;
+        span.style.transitionDelay = `${0.3 + i * 0.28}s`;
         return i < words.length - 1 ? [span, " "] : [span];
       })
     );
@@ -422,8 +422,15 @@
     void el.titlecard.offsetWidth; // restart the transitions
     requestAnimationFrame(() => el.titlecard.classList.add("is-on"));
     clearTimeout(cardTimer);
-    cardTimer = setTimeout(hideCard, 11500);
+    cardTimer = setTimeout(hideCard, 6500);
+    cardShownAt = Date.now();
   }
+
+  // A tap anywhere on the card moves on, once the line has had a moment
+  let cardShownAt = 0;
+  el.titlecard.addEventListener("click", () => {
+    if (cardOpen && Date.now() - cardShownAt > 1500) hideCard();
+  });
 
   function hideCard() {
     if (!cardOpen) return;
