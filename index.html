@@ -38,7 +38,25 @@
           <span class="gate-for">for</span>
           <span class="gate-name" data-recipient>Nare</span>
         </h1>
-        <div class="headphones">
+        <button class="ticket-btn" id="startBtn" type="button">
+          <span class="ticket">
+            <span class="ticket-stub" aria-hidden="true">Admit<br />One</span>
+            <span class="ticket-main">
+              <span class="ticket-label">Dim the lights</span>
+              <span class="ticket-small">tap to start the film</span>
+            </span>
+          </span>
+        </button>
+        <p class="gate-meta">about 4 minutes</p>
+      </div>
+    </section>
+
+    <!-- Backstage: black screen between the ticket and the curtains -->
+    <section class="backstage" id="backstage" aria-labelledby="backstageTitle" hidden>
+      <div class="backstage-glow" aria-hidden="true"></div>
+      <div class="backstage-inner">
+        <p class="kicker bs-step">Before the show</p>
+        <div class="headphones bs-step">
           <div class="hp-rule" aria-hidden="true">
             <span class="hp-line"></span>
             <span class="hp-badge">
@@ -50,21 +68,13 @@
             </span>
             <span class="hp-line"></span>
           </div>
-          <p class="hp-text">Please put your <em>headphones</em>&nbsp;on</p>
         </div>
-        <p class="gate-note">
+        <h2 class="hp-text bs-step" id="backstageTitle">Please put your <em>headphones</em>&nbsp;on</h2>
+        <p class="bs-note bs-step">
           Listen to the lyrics, and <strong>pay attention to every detail.</strong>
         </p>
-        <button class="ticket-btn" id="startBtn" type="button">
-          <span class="ticket">
-            <span class="ticket-stub" aria-hidden="true">Admit<br />One</span>
-            <span class="ticket-main">
-              <span class="ticket-label">Dim the lights</span>
-              <span class="ticket-small">tap to start the film</span>
-            </span>
-          </span>
-        </button>
-        <p class="gate-meta">about 4 minutes &middot; volume up</p>
+        <button class="ready-btn bs-step" id="readyBtn" type="button">I&rsquo;m ready</button>
+        <p class="gate-meta bs-step">volume up</p>
       </div>
     </section>
 

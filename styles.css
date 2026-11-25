@@ -318,20 +318,6 @@ a {
   color: var(--gold-soft);
 }
 
-.gate-note {
-  max-width: 26ch;
-  margin: 18px auto 0;
-  font-size: 18px;
-  line-height: 1.5;
-  color: rgba(255, 246, 232, 0.92);
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
-}
-
-.gate-note strong {
-  color: var(--gold-soft);
-  font-weight: 700;
-}
-
 .gate-meta {
   margin: 18px 0 0;
   font-size: 13px;
@@ -363,6 +349,113 @@ a {
   0%, 86%, 100% { transform: rotate(0); }
   90% { transform: rotate(-2.5deg); }
   95% { transform: rotate(2deg); }
+}
+
+/* The usher tears the ticket: the stub drops away */
+.ticket-btn.is-torn {
+  animation: none;
+  pointer-events: none;
+}
+
+.ticket-btn.is-torn .ticket-stub {
+  transform: translate(-6px, 22px) rotate(-16deg);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.5, 0, 0.75, 0), opacity 0.5s ease;
+}
+
+.ticket-btn.is-torn .ticket-main {
+  transform: translateX(6px);
+  transition: transform 0.4s ease;
+}
+
+/* ---------- Backstage ---------- */
+
+.backstage {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+  text-align: center;
+  background: #050403;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.backstage.is-on {
+  opacity: 1;
+}
+
+.backstage-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 60% 45% at 50% 40%, rgba(233, 181, 95, 0.12), transparent 70%);
+}
+
+.backstage-inner {
+  position: relative;
+  max-width: 30rem;
+}
+
+/* Each line arrives one after another */
+.bs-step {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+.backstage.is-on .bs-step {
+  opacity: 1;
+  transform: none;
+}
+
+.backstage.is-on .bs-step:nth-child(1) { transition-delay: 0.3s; }
+.backstage.is-on .bs-step:nth-child(2) { transition-delay: 0.7s; }
+.backstage.is-on .bs-step:nth-child(3) { transition-delay: 1.1s; }
+.backstage.is-on .bs-step:nth-child(4) { transition-delay: 2.1s; }
+.backstage.is-on .bs-step:nth-child(5) { transition-delay: 3.1s; }
+.backstage.is-on .bs-step:nth-child(6) { transition-delay: 3.4s; }
+
+.backstage .headphones {
+  margin-top: 22px;
+}
+
+.bs-note {
+  max-width: 24ch;
+  margin: 22px auto 0;
+  font-size: 19px;
+  line-height: 1.5;
+  color: rgba(255, 246, 232, 0.86);
+}
+
+.bs-note strong {
+  display: block;
+  margin-top: 2px;
+  color: var(--gold-soft);
+  font-weight: 700;
+}
+
+.ready-btn {
+  margin-top: 34px;
+  padding: 15px 40px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f4cd82, var(--gold));
+  color: var(--paper-ink);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 12px 34px rgba(233, 181, 95, 0.3);
+}
+
+.ready-btn:active {
+  transform: scale(0.97) !important;
+}
+
+.backstage .gate-meta {
+  color: rgba(255, 246, 232, 0.5);
 }
 
 .ticket {

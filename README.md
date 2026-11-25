@@ -1,6 +1,8 @@
 # Starring Nare
 
-A one-page "film that hasn't started yet" for Nare. Red curtains open, the song
+A one-page "film that hasn't started yet" for Nare. She taps the ticket, gets a
+black "backstage" screen asking her to put headphones on and pay attention to every
+detail, taps "I'm ready", then red curtains open, the song
 "SMS" by Mi Qani Hogi feat. Sebu starts playing, and opening credits roll until
 **0:48**, when the line "Հլը չի սկսե կինոն մեր" ("our movie hasn't started yet")
 lands. A title card plays, then the rest unlocks: a movie poster, a short
@@ -52,7 +54,7 @@ search results.
 
 ## "She's messaging you" notification
 
-When she taps "Message Aram on Instagram", the page sends a push notification through
+When she taps "Message Aram on Instagram" (or his @handle), the page sends a push notification through
 [ntfy](https://ntfy.sh) (free, no account). To receive it on a phone:
 
 1. Install the **ntfy** app (App Store or Google Play).

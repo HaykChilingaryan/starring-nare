@@ -17,6 +17,8 @@
   const el = {
     body: document.body,
     startBtn: $("#startBtn"),
+    backstage: $("#backstage"),
+    readyBtn: $("#readyBtn"),
     screenHint: $("#screenHint"),
     screenFallback: $("#screenFallback"),
     fallbackLink: $("#fallbackLink"),
@@ -120,20 +122,31 @@
     el.slate.classList.add("is-clapped");
   }
 
-  // Ping Aram's phone (ntfy.sh) when she taps the Message button.
-  // A plain-text POST with query-string options, so no CORS preflight is needed,
-  // and keepalive lets it finish even though she's leaving for Instagram.
-  let notified = false;
-  function notifyMessage() {
+  // Ping Aram's phone (ntfy.sh) when she taps the Message button or his handle.
+  // Each kind is sent once per visit. A plain-text POST with query-string options,
+  // so no CORS preflight is needed, and keepalive lets it finish even though
+  // she's leaving for Instagram.
+  const notifySent = new Set();
+  function notify(kind) {
     const topic = String(cfg.notifyTopic || "").trim();
-    if (!topic || notified) return;
-    notified = true;
-    const params = new URLSearchParams({
-      title: `${name} is messaging you!`,
-      tags: "clapper,speech_balloon",
-      priority: "high",
-    });
-    const message = `${name} tapped "Message ${sender || "you"} on Instagram" on ${location.host}. Check your DMs.`;
+    if (!topic || notifySent.has(kind)) return;
+    notifySent.add(kind);
+    const handle = String(cfg.instagram || "").replace(/^@/, "").trim();
+    const kinds = {
+      message: {
+        title: `${name} is messaging you!`,
+        tags: "clapper,speech_balloon",
+        body: `${name} tapped "Message ${sender || "you"} on Instagram" on ${location.host}. Check your DMs.`,
+      },
+      profile: {
+        title: `${name} opened your Instagram!`,
+        tags: "clapper,eyes",
+        body: `${name} tapped @${handle} on ${location.host}. She's looking at your profile.`,
+      },
+    };
+    const k = kinds[kind];
+    const params = new URLSearchParams({ title: k.title, tags: k.tags, priority: "high" });
+    const message = k.body;
     try {
       fetch(`https://ntfy.sh/${encodeURIComponent(topic)}?${params}`, {
         method: "POST",
@@ -168,9 +181,10 @@
     }
 
     el.dmBtn.addEventListener("click", () => {
-      notifyMessage();
+      notify("message");
       clap();
     });
+    el.profileLink.addEventListener("click", () => notify("profile"));
   }
 
   // Clap the slate and land the stamp when they scroll into view
@@ -288,19 +302,37 @@
 
   // ---------- Opening ----------
 
+  // Ticket tap: tear the stub, then go "backstage" (black screen with the
+  // headphones prompt). The song waits for the "I'm ready" tap, because phones
+  // only allow sound to start right after a tap.
+  function openBackstage() {
+    if (started || !el.backstage.hidden) return;
+    el.startBtn.classList.add("is-torn");
+    setTimeout(() => {
+      el.backstage.hidden = false;
+      void el.backstage.offsetWidth;
+      el.backstage.classList.add("is-on");
+      setTimeout(() => el.readyBtn.focus({ preventScroll: true }), REDUCED ? 0 : 3200);
+    }, REDUCED ? 0 : 450);
+  }
+
   function start() {
     if (started) return;
     started = true;
     window.scrollTo(0, 0);
     el.body.classList.add("is-started");
     play();
+    // Fade the backstage out as the curtains part behind it
+    el.backstage.classList.remove("is-on");
+    setTimeout(() => (el.backstage.hidden = true), REDUCED ? 0 : 900);
     setTimeout(() => el.body.classList.remove("is-gated"), REDUCED ? 0 : 900);
     setTimeout(() => {
       if (!playerFailed) el.nowPlaying.hidden = false;
     }, REDUCED ? 0 : 2200);
   }
 
-  el.startBtn.addEventListener("click", start);
+  el.startBtn.addEventListener("click", openBackstage);
+  el.readyBtn.addEventListener("click", start);
 
   // ---------- Sync loop: credits, cue bar, the 0:48 moment ----------
 
