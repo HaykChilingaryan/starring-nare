@@ -232,42 +232,67 @@ a {
   letter-spacing: -0.02em;
 }
 
-/* Headphones warning */
+/* Headphones: a gold medallion between two hairlines, like a pre-show card */
 .headphones {
+  margin: 26px auto 0;
+  text-align: center;
+}
+
+.hp-rule {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  width: fit-content;
-  max-width: 100%;
-  margin: 22px auto 0;
-  padding: 10px 18px 10px 12px;
-  border: 1.5px solid rgba(233, 181, 95, 0.75);
-  border-radius: 16px;
-  background: rgba(12, 9, 8, 0.55);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 30px rgba(233, 181, 95, 0.18);
-  text-align: left;
+  gap: 16px;
 }
 
-.hp-sign {
-  flex: none;
-  width: 54px;
-  height: auto;
-  filter: drop-shadow(0 0 10px rgba(233, 181, 95, 0.45));
-  animation: hp-pulse 2.4s ease-in-out infinite;
+.hp-line {
+  width: min(22vw, 110px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245, 217, 160, 0.85));
 }
 
-.hp-triangle {
-  fill: var(--gold);
-  stroke: var(--paper-ink);
-  stroke-width: 3;
-  stroke-linejoin: round;
+.hp-line:last-child {
+  background: linear-gradient(90deg, rgba(245, 217, 160, 0.85), transparent);
+}
+
+.hp-badge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff0c8, var(--gold) 55%, #c98a35 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 240, 210, 0.7),
+    0 0 0 6px rgba(233, 181, 95, 0.16),
+    0 0 34px rgba(233, 181, 95, 0.45);
+}
+
+.hp-badge::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(245, 217, 160, 0.8);
+  animation: hp-ping 2.6s ease-out infinite;
+}
+
+@keyframes hp-ping {
+  0% { transform: scale(1); opacity: 0.9; }
+  70%, 100% { transform: scale(1.7); opacity: 0; }
+}
+
+.hp-icon {
+  width: 34px;
+  height: 34px;
+  margin-top: 2px;
 }
 
 .hp-band {
   fill: none;
   stroke: var(--paper-ink);
-  stroke-width: 3.2;
+  stroke-width: 3.4;
   stroke-linecap: round;
 }
 
@@ -275,18 +300,22 @@ a {
   fill: var(--paper-ink);
 }
 
-@keyframes hp-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
+.hp-text {
+  max-width: 16ch;
+  margin: 16px auto 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(28px, 7.6vw, 40px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--cream);
+  text-wrap: balance;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
 }
 
-.hp-text {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: clamp(25px, 7.4vw, 34px);
-  line-height: 1.1;
-  color: var(--cream);
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
+.hp-text em {
+  color: var(--gold-soft);
 }
 
 .gate-note {
