@@ -305,6 +305,10 @@
   // Ticket tap: tear the stub, then go "backstage" (black screen with the
   // headphones prompt). The song waits for the "I'm ready" tap, because phones
   // only allow sound to start right after a tap.
+  // The backstage page never advances on its own: only a deliberate tap on
+  // "I'm ready", and that button stays disabled until it has faded in, so a
+  // double-tap on the ticket can't land on it while it's still invisible.
+  let readyArmed = false;
   function openBackstage() {
     if (started || !el.backstage.hidden) return;
     el.startBtn.classList.add("is-torn");
@@ -312,12 +316,16 @@
       el.backstage.hidden = false;
       void el.backstage.offsetWidth;
       el.backstage.classList.add("is-on");
-      setTimeout(() => el.readyBtn.focus({ preventScroll: true }), REDUCED ? 0 : 3200);
+      setTimeout(() => {
+        readyArmed = true;
+        el.readyBtn.disabled = false;
+        el.readyBtn.focus({ preventScroll: true });
+      }, REDUCED ? 300 : 3600);
     }, REDUCED ? 0 : 450);
   }
 
   function start() {
-    if (started) return;
+    if (started || !readyArmed) return;
     started = true;
     window.scrollTo(0, 0);
     el.body.classList.add("is-started");

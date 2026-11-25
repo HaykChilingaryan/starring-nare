@@ -454,6 +454,10 @@ a {
   transform: scale(0.97) !important;
 }
 
+.ready-btn:disabled {
+  cursor: default;
+}
+
 .backstage .gate-meta {
   color: rgba(255, 246, 232, 0.5);
 }
