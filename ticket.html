@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Ticket for Nare</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;700&family=Fraunces:ital,opsz,wght@1,9..144,600&family=Noto+Serif+Armenian:wght@700&display=swap"
+    />
+    <style>
+      :root {
+        --cream: #f7eddb;
+        --gold: #e9b55f;
+        --ink: #2b1a12;
+        --velvet: #9c1d31;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 32px 16px 48px;
+        background: #1a1310;
+        color: #f4e9d8;
+        font-family: "DM Sans", system-ui, sans-serif;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .help {
+        max-width: 6.6in;
+        margin: 0 auto 28px;
+        line-height: 1.5;
+      }
+
+      .help h1 {
+        margin: 0 0 6px;
+        font-family: "Fraunces", serif;
+        font-style: italic;
+        font-weight: 600;
+        font-size: 30px;
+      }
+
+      .help p {
+        margin: 0;
+        color: rgba(244, 233, 216, 0.72);
+      }
+
+      .help button {
+        margin-top: 14px;
+        padding: 10px 22px;
+        border: 0;
+        border-radius: 999px;
+        background: var(--gold);
+        color: var(--ink);
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .sheet {
+        display: grid;
+        justify-content: center;
+        gap: 0.35in;
+      }
+
+      .ticket {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1.05in 1fr 1.9in;
+        width: 6.6in;
+        height: 2.55in;
+        color: var(--ink);
+        filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.4));
+      }
+
+      .ticket > * {
+        position: relative;
+      }
+
+      /* paper + notches */
+      .ticket::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--cream);
+        border-radius: 10px;
+        -webkit-mask:
+          radial-gradient(circle 0.13in at 1.05in 0, #0000 97%, #000) top / 100% 51% no-repeat,
+          radial-gradient(circle 0.13in at 1.05in 100%, #0000 97%, #000) bottom / 100% 51% no-repeat;
+        mask:
+          radial-gradient(circle 0.13in at 1.05in 0, #0000 97%, #000) top / 100% 51% no-repeat,
+          radial-gradient(circle 0.13in at 1.05in 100%, #0000 97%, #000) bottom / 100% 51% no-repeat;
+      }
+
+      .stub {
+        display: grid;
+        place-items: center;
+        border-right: 2px dashed rgba(43, 26, 18, 0.35);
+        background: var(--gold);
+        border-radius: 10px 0 0 10px;
+        -webkit-mask:
+          radial-gradient(circle 0.13in at 100% 0, #0000 97%, #000) top / 100% 51% no-repeat,
+          radial-gradient(circle 0.13in at 100% 100%, #0000 97%, #000) bottom / 100% 51% no-repeat;
+        mask:
+          radial-gradient(circle 0.13in at 100% 0, #0000 97%, #000) top / 100% 51% no-repeat,
+          radial-gradient(circle 0.13in at 100% 100%, #0000 97%, #000) bottom / 100% 51% no-repeat;
+      }
+
+      .stub-text {
+        transform: rotate(-90deg);
+        white-space: nowrap;
+        text-align: center;
+        font-family: "Bebas Neue", sans-serif;
+        line-height: 1;
+      }
+
+      .stub-text b {
+        display: block;
+        font-weight: 400;
+        font-size: 34px;
+        letter-spacing: 0.08em;
+      }
+
+      .stub-text small {
+        display: block;
+        margin-top: 4px;
+        font-size: 13px;
+        letter-spacing: 0.2em;
+      }
+
+      .main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0.18in 0.22in;
+      }
+
+      .eyebrow {
+        margin: 0;
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 14px;
+        letter-spacing: 0.24em;
+        color: var(--velvet);
+      }
+
+      .arm {
+        margin: 2px 0 0;
+        font-family: "Noto Serif Armenian", serif;
+        font-weight: 700;
+        font-size: 17px;
+        color: var(--velvet);
+      }
+
+      .title {
+        margin: 2px 0 0;
+        font-family: "Fraunces", serif;
+        font-style: italic;
+        font-weight: 600;
+        font-size: 44px;
+        line-height: 1;
+      }
+
+      .tag {
+        margin: 6px 0 0;
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .meta {
+        display: flex;
+        gap: 14px;
+        margin-top: 10px;
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 13px;
+        letter-spacing: 0.12em;
+        color: rgba(43, 26, 18, 0.7);
+      }
+
+      .meta b {
+        font-weight: 400;
+        color: var(--ink);
+      }
+
+      .qr {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        border-left: 2px dashed rgba(43, 26, 18, 0.35);
+      }
+
+      .qr img {
+        width: 1.45in;
+        height: 1.45in;
+        border-radius: 6px;
+        background: #fff;
+      }
+
+      .qr p {
+        margin: 0;
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 12.5px;
+        letter-spacing: 0.14em;
+        text-align: center;
+      }
+
+      @media print {
+        @page {
+          size: letter;
+          margin: 0.5in;
+        }
+
+        body {
+          padding: 0;
+          background: #fff;
+        }
+
+        .help {
+          display: none;
+        }
+
+        .ticket {
+          filter: none;
+          outline: 1px dashed #bbb;
+          outline-offset: 0.08in;
+          break-inside: avoid;
+        }
+      }
+
+      @media screen and (max-width: 700px) {
+        .sheet {
+          zoom: 0.52;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="help">
+      <h1>The ticket</h1>
+      <p>
+        Print on cardstock, cut along the dotted outline, and hand her one. Three per page. The QR code
+        opens the site, so make sure the domain is live first.
+      </p>
+      <button type="button" onclick="window.print()">Print tickets</button>
+    </div>
+
+    <div class="sheet" id="sheet"></div>
+
+    <template id="ticketTpl">
+      <article class="ticket">
+        <div class="stub">
+          <div class="stub-text"><b>Admit one</b><small>No. 0048</small></div>
+        </div>
+        <div class="main">
+          <p class="eyebrow">A film that hasn&rsquo;t started yet</p>
+          <p class="arm" lang="hy">Կինոն մեր</p>
+          <p class="title">for <span data-recipient>Nare</span></p>
+          <p class="tag">Sound on, then scan. Listen to the lyrics, especially at 0:48.</p>
+          <div class="meta">
+            <span>Screen <b>yours</b></span>
+            <span>Seat <b>front row</b></span>
+            <span>Showtime <b>now</b></span>
+          </div>
+        </div>
+        <div class="qr">
+          <img src="assets/qr.svg" alt="QR code that opens the film" />
+          <p data-domain>starring-nare.com</p>
+        </div>
+      </article>
+    </template>
+
+    <script src="config.js"></script>
+    <script>
+      const cfg = window.FILM_CONFIG || {};
+      const tpl = document.getElementById("ticketTpl");
+      const sheet = document.getElementById("sheet");
+      for (let i = 0; i < 3; i += 1) sheet.appendChild(tpl.content.cloneNode(true));
+      document.querySelectorAll("[data-recipient]").forEach((n) => (n.textContent = cfg.recipientName || "Nare"));
+      if (cfg.siteUrl) {
+        const domain = cfg.siteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+        document.querySelectorAll("[data-domain]").forEach((n) => (n.textContent = domain));
+      }
+    </script>
+  </body>
+</html>
