@@ -609,42 +609,65 @@ main {
   box-shadow: 0 0 0 5px rgba(233, 181, 95, 0.35), 0 0 20px var(--gold);
 }
 
-/* Opening credits */
+/* Opening credits: a lyrics-style window. The current line sits at a fixed
+   focus point; older lines slide up and fade, the typing dots wait below. */
+.credits-window {
+  position: relative;
+  max-width: 30ch;
+  height: 220px;
+  margin: 24px auto 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 30%, #000 76%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 30%, #000 76%, transparent 100%);
+  scroll-margin-top: 16px;
+  scroll-margin-bottom: calc(100px + env(safe-area-inset-bottom));
+}
+
+.credits-track {
+  position: relative;
+  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: transform;
+}
+
 .credits {
   list-style: none;
-  max-width: 28ch;
-  margin: 30px auto 0;
+  margin: 0;
   padding: 0;
 }
 
 .credits li {
-  max-height: 0;
-  margin: 0;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(10px);
+  display: none;
+  padding: 8px 0;
   font-family: var(--serif);
   font-style: italic;
   font-size: 22px;
   line-height: 1.35;
-  transition: opacity 1s ease, transform 1s ease, max-height 1s ease, margin 1s ease;
+  opacity: 0.3;
+  transition: opacity 0.8s ease;
 }
 
 .credits li.is-shown {
-  max-height: 6em;
-  margin-top: 14px;
-  opacity: 0.34;
-  transform: none;
+  display: block;
 }
 
 .credits li.is-current {
   opacity: 1;
+  animation: credit-in 0.9s ease both;
 }
 
-.credits li,
-.typing {
-  scroll-margin-top: 24px;
-  scroll-margin-bottom: calc(110px + env(safe-area-inset-bottom));
+@keyframes credit-in {
+  from { opacity: 0; transform: translateY(14px); filter: blur(4px); }
+}
+
+/* Once the line has played, show every credit as a still list */
+.is-heard .credits-window {
+  height: auto;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.is-heard .credits-track {
+  transform: none !important;
 }
 
 /* "Next line is coming": a little typing bubble */
@@ -652,7 +675,7 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-top: 18px;
+  margin-top: 6px;
   padding: 11px 15px;
   border-radius: 18px 18px 18px 6px;
   background: rgba(244, 233, 216, 0.08);
@@ -1177,39 +1200,8 @@ main {
 }
 
 
-.answers {
-  display: grid;
-  margin-top: 26px;
-}
-
-.answer {
-  min-height: 56px;
-  padding: 12px 16px;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 17px;
-  transition: transform 0.15s ease, background 0.2s ease;
-}
-
-.answer:active {
-  transform: scale(0.97);
-}
-
-.answer-yes {
-  border: 0;
-  background: linear-gradient(180deg, #f2c878, var(--gold));
-  color: var(--paper-ink);
-  box-shadow: 0 10px 30px rgba(233, 181, 95, 0.28);
-}
-
-
-.response {
-  margin-top: 20px;
-  scroll-margin-bottom: calc(96px + env(safe-area-inset-bottom));
-}
-
-.response:empty {
-  display: none;
+.postcard {
+  margin-top: 28px;
 }
 
 .reply {
@@ -1259,6 +1251,11 @@ main {
   letter-spacing: 0.12em;
   line-height: 1;
   transform: rotate(-12deg);
+  opacity: 0;
+}
+
+/* The stamp lands when the postcard scrolls into view */
+.postcard.is-live .stamp {
   opacity: 0.85;
   animation: stamp 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) 0.25s both;
 }

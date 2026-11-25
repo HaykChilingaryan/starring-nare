@@ -14,7 +14,7 @@ window.FILM_CONFIG = {
   // Left empty on purpose so his number isn't on a public page.
   phone: "",
 
-  // Push notification when she taps "Let's continue it", sent through ntfy.sh.
+  // Push notification when she taps "Message Aram on Instagram", sent through ntfy.sh.
   // To get it: install the free "ntfy" app, tap +, and subscribe to this topic.
   // Leave empty to turn notifications off.
   notifyTopic: "next-scene-cbebaf9ff30a5b0f",

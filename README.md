@@ -6,7 +6,7 @@ A one-page "film that hasn't started yet" for Nare. Red curtains open, the song
 lands. A title card plays, then the rest unlocks: a movie poster, a short
 screenplay of the Best Buy story, Aram's note, and the ending: "How about we
 continue the movie?" with a clapperboard for the next scene (getting a coffee
-together). Saying yes opens an Instagram DM to Aram.
+together) and a postcard whose button opens an Instagram DM to Aram.
 
 Domain: **for-nare.com** (bought on GoDaddy, DNS managed there).
 
@@ -50,9 +50,9 @@ search results.
 
 `netlify.toml` is kept in case you'd rather host on Netlify.
 
-## "She said yes" notification
+## "She's messaging you" notification
 
-When she taps "Let's continue it", the page sends a push notification through
+When she taps "Message Aram on Instagram", the page sends a push notification through
 [ntfy](https://ntfy.sh) (free, no account). To receive it on a phone:
 
 1. Install the **ntfy** app (App Store or Google Play).

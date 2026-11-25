@@ -25,6 +25,8 @@
     cueFill: $("#cueFill"),
     credits: $("#credits"),
     typing: $("#typing"),
+    creditsWindow: $("#creditsWindow"),
+    creditsTrack: $("#creditsTrack"),
     after: $("#after"),
     skipBtn: $("#skipBtn"),
     poster: $("#poster"),
@@ -32,7 +34,12 @@
     slate: $("#slate"),
     nextHeading: $("#nextHeading"),
     nextAction: $("#nextAction"),
-    response: $("#response"),
+    postcard: $("#postcard"),
+    postcardText: $("#postcardText"),
+    dmBtn: $("#dmBtn"),
+    dmHint: $("#dmHint"),
+    profileLine: $("#profileLine"),
+    profileLink: $("#profileLink"),
     replayBtn: $("#replayBtn"),
     songLink: $("#songLink"),
     titlecard: $("#titlecard"),
@@ -105,7 +112,7 @@
     el.tcCredit.textContent = `“${cfg.songTitle || "SMS"}” · ${cfg.songArtist || ""}`;
   }
 
-  // ---------- The ask ----------
+  // ---------- The ending: clapperboard + postcard ----------
 
   function clap() {
     el.slate.classList.remove("is-clapped");
@@ -113,20 +120,20 @@
     el.slate.classList.add("is-clapped");
   }
 
-  // Ping Aram's phone (ntfy.sh) the first time she says yes.
+  // Ping Aram's phone (ntfy.sh) when she taps the Message button.
   // A plain-text POST with query-string options, so no CORS preflight is needed,
-  // and keepalive lets it finish even if she jumps straight to Instagram.
+  // and keepalive lets it finish even though she's leaving for Instagram.
   let notified = false;
-  function notifyYes() {
+  function notifyMessage() {
     const topic = String(cfg.notifyTopic || "").trim();
     if (!topic || notified) return;
     notified = true;
     const params = new URLSearchParams({
-      title: `${name} said yes!`,
-      tags: "clapper,coffee",
+      title: `${name} is messaging you!`,
+      tags: "clapper,speech_balloon",
       priority: "high",
     });
-    const message = `${name} tapped "Let's continue it" on ${location.host}. Next scene: coffee.`;
+    const message = `${name} tapped "Message ${sender || "you"} on Instagram" on ${location.host}. Check your DMs.`;
     try {
       fetch(`https://ntfy.sh/${encodeURIComponent(topic)}?${params}`, {
         method: "POST",
@@ -139,62 +146,51 @@
     }
   }
 
-  function renderYes() {
-    el.response.dataset.answer = "yes";
-    notifyYes();
-    clap();
-
-    const box = make("div", "reply reply-yes");
-    const stamp = make("span", "stamp", "Admit two");
-    stamp.setAttribute("aria-hidden", "true");
-    box.append(stamp, make("p", "reply-title", "And… action."));
-
+  function setupPostcard() {
     const handle = String(cfg.instagram || "").replace(/^@/, "").trim();
-    const hasContact = Boolean(handle || cfg.phone);
-    box.append(
-      make(
-        "p",
-        "",
-        hasContact
-          ? `Thank you, ${name}. Really. Send me a message (an SMS, like the song… or a DM, close enough) and we'll pick a day for that coffee.`
-          : `Thank you, ${name}. Really. Next time you see me at Best Buy, just say “next scene.” I'll know.`
-      )
-    );
 
     if (handle) {
-      const dm = make("a", "sms-btn", `Message ${sender || "me"} on Instagram`);
-      dm.href = `https://ig.me/m/${encodeURIComponent(handle)}`;
-      dm.target = "_blank";
-      dm.rel = "noopener";
-      box.append(dm, make("p", "reply-small", "Not sure what to say? “Next scene ☕” works."));
-
-      const p = make("p", "reply-small", "or find him at ");
-      const profile = make("a", "", `@${handle}`);
-      profile.href = `https://www.instagram.com/${encodeURIComponent(handle)}/`;
-      profile.target = "_blank";
-      profile.rel = "noopener";
-      p.append(profile);
-      box.append(p);
-    }
-
-    if (cfg.phone) {
+      el.dmBtn.textContent = `Message ${sender || "me"} on Instagram`;
+      el.dmBtn.href = `https://ig.me/m/${encodeURIComponent(handle)}`;
+      el.profileLink.textContent = `@${handle}`;
+      el.profileLink.href = `https://www.instagram.com/${encodeURIComponent(handle)}/`;
+    } else if (cfg.phone) {
       const text = `Hi${sender ? " " + sender : ""}! It's ${name} 🎬 Let's continue the movie ☕`;
-      const link = make("a", handle ? "" : "sms-btn", handle ? `text ${cfg.phone}` : `Text ${sender || "me"}`);
-      link.href = `sms:${cfg.phone}?&body=${encodeURIComponent(text)}`;
-      if (handle) {
-        const p = make("p", "reply-small", "or ");
-        p.append(link);
-        box.append(p);
-      } else {
-        box.append(link);
-      }
+      el.dmBtn.textContent = `Text ${sender || "me"}`;
+      el.dmBtn.href = `sms:${cfg.phone}?&body=${encodeURIComponent(text)}`;
+      el.dmBtn.removeAttribute("target");
+      el.profileLine.hidden = true;
+    } else {
+      el.dmBtn.hidden = true;
+      el.dmHint.hidden = true;
+      el.profileLine.hidden = true;
+      el.postcardText.textContent = "Next time you see me at Best Buy, just say “next scene.” I'll know.";
     }
 
-    el.response.replaceChildren(box);
-    el.response.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block: "nearest" });
+    el.dmBtn.addEventListener("click", () => {
+      notifyMessage();
+      clap();
+    });
   }
 
-  $(".answer-yes").addEventListener("click", renderYes);
+  // Clap the slate and land the stamp when they scroll into view
+  function watchEnding() {
+    const once = (node, threshold, fn) => {
+      if (!("IntersectionObserver" in window)) return fn();
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            io.disconnect();
+            fn();
+          }
+        },
+        { threshold }
+      );
+      io.observe(node);
+    };
+    once(el.slate, 0.6, clap);
+    once(el.postcard, 0.5, () => el.postcard.classList.add("is-live"));
+  }
 
   // ---------- Soundtrack (YouTube IFrame API) ----------
 
@@ -331,8 +327,12 @@
 
     // Typing dots while the next line (or the 0:48 line) is on its way
     el.typing.hidden = unlocked;
-    if (shownCount > lastShownCount && !unlocked && !cardOpen) followCredits();
-    lastShownCount = shownCount;
+    if (shownCount !== lastShownCount) {
+      const grew = shownCount > lastShownCount;
+      lastShownCount = shownCount;
+      positionCredits();
+      if (grew && shownCount > 0 && !unlocked && !cardOpen) followCredits();
+    }
 
     if (!live || cardOpen) return;
     const reached = t >= LINE_AT - 0.4;
@@ -340,18 +340,35 @@
     else if (unlocked && cardArmed && reached && t < LINE_AT + 6) showCard(false);
   }
 
-  // Keep the newest credit line (and the dots under it) on screen.
-  // Waits for the line's reveal transition so it scrolls to where the line ends up.
-  let lastShownCount = 0;
+  // Lyrics-style scrolling: slide the track so the current line (or the dots,
+  // before the first line) sits at a fixed focus point inside the window.
+  let lastShownCount = -1;
   let followTimer = null;
+  function positionCredits() {
+    requestAnimationFrame(() => {
+      if (unlocked) {
+        el.creditsTrack.style.transform = "";
+        return;
+      }
+      const current = el.credits.querySelector("li.is-current");
+      const target = current || (el.typing.hidden ? null : el.typing);
+      if (!target) return;
+      const focus = el.creditsWindow.clientHeight * 0.42;
+      const center = target.offsetTop + target.offsetHeight / 2;
+      el.creditsTrack.style.transform = `translateY(${Math.round(focus - center)}px)`;
+    });
+  }
+
+  // Also keep the window itself on screen (no-op when it's already visible)
   function followCredits() {
     clearTimeout(followTimer);
     followTimer = setTimeout(() => {
       if (unlocked || cardOpen) return;
-      const target = el.typing.hidden ? el.credits.lastElementChild : el.typing;
-      if (target) target.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block: "nearest" });
-    }, REDUCED ? 0 : 1000);
+      el.creditsWindow.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block: "nearest" });
+    }, 300);
   }
+
+  window.addEventListener("resize", positionCredits);
 
   setInterval(tick, 200);
 
@@ -441,5 +458,7 @@
   });
 
   applyConfig();
+  setupPostcard();
+  watchEnding();
   loadYouTube();
 })();

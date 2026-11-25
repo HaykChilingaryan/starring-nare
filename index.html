@@ -102,8 +102,12 @@
           </div>
         </div>
 
-        <ol class="credits" id="credits" aria-live="polite"></ol>
-        <div class="typing" id="typing" aria-hidden="true" hidden><span></span><span></span><span></span></div>
+        <div class="credits-window" id="creditsWindow">
+          <div class="credits-track" id="creditsTrack">
+            <ol class="credits" id="credits" aria-live="polite"></ol>
+            <div class="typing" id="typing" aria-hidden="true" hidden><span></span><span></span><span></span></div>
+          </div>
+        </div>
       </section>
 
       <!-- Everything after 0:48 -->
@@ -228,11 +232,19 @@
             </div>
           </div>
 
-          <div class="answers">
-            <button class="answer answer-yes" type="button" data-answer="yes">Let&rsquo;s continue it</button>
-          </div>
-
-          <div class="response" id="response" aria-live="polite"></div>
+          <article class="reply reply-yes postcard" id="postcard">
+            <span class="stamp" aria-hidden="true">Admit two</span>
+            <p class="reply-title">Your cue, <span data-recipient>Nare</span>.</p>
+            <p id="postcardText">
+              Send me a message (an SMS, like the song&hellip; or a DM, close enough) and we&rsquo;ll pick a
+              day for that coffee.
+            </p>
+            <a class="sms-btn" id="dmBtn" href="#" target="_blank" rel="noopener">Message Aram on Instagram</a>
+            <p class="reply-small" id="dmHint">Not sure what to say? &ldquo;Next scene &#9749;&rdquo; works.</p>
+            <p class="reply-small" id="profileLine">
+              or find him at <a id="profileLink" href="#" target="_blank" rel="noopener">@aram_chilingaryan</a>
+            </p>
+          </article>
         </section>
 
         <!-- End credits -->
