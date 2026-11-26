@@ -25,10 +25,15 @@ window.FILM_CONFIG = {
   songTitle: "SMS",
   songArtist: "Mi Qani Hogi feat. Sebu",
 
-  // The moment the line lands, in seconds (0:48)
+  // Where the part starts, in seconds (0:48): the cue bar and labels count to this
   lineAt: 48,
   lineArmenian: "Հլը չի սկսե կինոն մեր",
   lineEnglish: "Our movie hasn't started yet.",
+
+  // When each word of that line is actually sung, in seconds into the video. The
+  // title card follows the song's own clock and reveals each word as it's sung,
+  // then shows the English and steps aside about 4 seconds after the last word.
+  lineWordsAt: [51.1, 51.5, 51.7, 52.1, 52.5],
 
   // Opening credits that fade in while the song plays, before 0:48 (seconds)
   credits: [

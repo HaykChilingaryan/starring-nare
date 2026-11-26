@@ -6,6 +6,16 @@
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
   const LINE_AT = Number(cfg.lineAt) || 48;
+  // The title card runs on the song's timeline: each word appears as it's sung
+  const WORDS_AT = (Array.isArray(cfg.lineWordsAt) && cfg.lineWordsAt.length ? cfg.lineWordsAt : [LINE_AT])
+    .map(Number)
+    .filter(Number.isFinite);
+  if (!WORDS_AT.length) WORDS_AT.push(LINE_AT);
+  const SUNG_AT = WORDS_AT[0];
+  const SUNG_END = WORDS_AT[WORDS_AT.length - 1];
+  const CARD_AT = SUNG_AT - 0.8; // fade in just before the line
+  const TRANSLATE_AT = SUNG_END + 0.6; // English once the last word lands
+  const CARD_UNTIL = SUNG_END + 4; // then step aside
   const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const YT_PLAYING = 1;
   const YT_BUFFERING = 3;
@@ -94,15 +104,14 @@
     if (next.heading) el.nextHeading.textContent = next.heading;
     if (next.action) el.nextAction.textContent = fillTokens(next.action);
 
-    // Title card: Armenian line word by word
+    // Title card: Armenian line word by word, each one timed to the song
     const words = String(cfg.lineArmenian || "").split(/\s+/).filter(Boolean);
-    el.tcArm.replaceChildren(
-      ...words.flatMap((w, i) => {
-        const span = make("span", "w", w);
-        span.style.transitionDelay = `${0.3 + i * 0.28}s`;
-        return i < words.length - 1 ? [span, " "] : [span];
-      })
-    );
+    tcWords = words.map((w, i) => {
+      const span = make("span", "w", w);
+      span.dataset.at = WORDS_AT[i] ?? SUNG_END + (i - WORDS_AT.length + 1) * 0.35;
+      return span;
+    });
+    el.tcArm.replaceChildren(...tcWords.flatMap((s, i) => (i < tcWords.length - 1 ? [s, " "] : [s])));
 
     const eng = cfg.lineEnglish || "";
     const idx = eng.toLowerCase().lastIndexOf("yet");
@@ -245,7 +254,8 @@
   let cardArmed = true;
   let cardOpen = false;
   let cardFirst = false;
-  let cardTimer = null;
+  let cardRaf = 0;
+  let tcWords = [];
   let hintTimer = null;
 
   const state = () => {
@@ -403,9 +413,9 @@
     }
 
     if (!live || cardOpen) return;
-    const reached = t >= LINE_AT - 0.4;
+    const reached = t >= CARD_AT;
     if (!unlocked && reached && state() === YT_PLAYING) showCard(true);
-    else if (unlocked && cardArmed && reached && t < LINE_AT + 6) showCard(false);
+    else if (unlocked && cardArmed && reached && t < CARD_UNTIL) showCard(false);
   }
 
   // Lyrics-style scrolling: slide the track so the current line (or the dots,
@@ -447,11 +457,62 @@
     el.titlecard.classList.remove("is-on");
     el.titlecard.hidden = false;
     el.body.classList.add("has-titlecard");
+    el.titlecard.classList.remove("is-translated");
+    tcWords.forEach((w) => w.classList.remove("is-in"));
     void el.titlecard.offsetWidth; // restart the transitions
     requestAnimationFrame(() => el.titlecard.classList.add("is-on"));
-    clearTimeout(cardTimer);
-    cardTimer = setTimeout(hideCard, 6500);
     cardShownAt = Date.now();
+
+    // Follow the song when it's playing around the line; otherwise (no soundtrack)
+    // play the same timeline off the wall clock.
+    const t = playerReady && !playerFailed && state() === YT_PLAYING ? time() : -1;
+    cardClock = t >= CARD_AT - 2 && t < CARD_UNTIL ? songNow : wallClock(CARD_AT);
+    lastCardT = -1;
+    cancelAnimationFrame(cardRaf);
+    cardRaf = requestAnimationFrame(runCard);
+  }
+
+  // The YouTube API only reports the time a few times a second, so smooth between
+  // reports to land each word on the beat.
+  let clockVal = -1;
+  let clockAt = 0;
+  function songNow() {
+    const t = time();
+    const now = performance.now();
+    if (t !== clockVal) {
+      clockVal = t;
+      clockAt = now;
+    }
+    return state() === YT_PLAYING ? t + Math.min((now - clockAt) / 1000, 0.5) : t;
+  }
+
+  function wallClock(from) {
+    const t0 = performance.now();
+    return () => from + (performance.now() - t0) / 1000;
+  }
+
+  let cardClock = songNow;
+  let lastCardT = -1;
+  let lastCardMove = 0;
+  function runCard() {
+    if (!cardOpen) return;
+    let t = cardClock();
+    // If the song stalls (paused, buffering), finish the card on its own
+    const now = performance.now();
+    if (t !== lastCardT) {
+      lastCardT = t;
+      lastCardMove = now;
+    } else if (now - lastCardMove > 1500) {
+      cardClock = wallClock(t);
+      t = cardClock();
+    }
+    for (const w of tcWords) if (t >= Number(w.dataset.at) - 0.1) w.classList.add("is-in");
+    if (t >= TRANSLATE_AT) el.titlecard.classList.add("is-translated");
+    if (t >= CARD_UNTIL) {
+      hideCard();
+      return;
+    }
+    cardRaf = requestAnimationFrame(runCard);
   }
 
   // A tap anywhere on the card moves on, once the line has had a moment
@@ -462,7 +523,7 @@
 
   function hideCard() {
     if (!cardOpen) return;
-    clearTimeout(cardTimer);
+    cancelAnimationFrame(cardRaf);
     el.titlecard.classList.remove("is-on");
     el.body.classList.remove("has-titlecard");
     setTimeout(() => {
@@ -497,7 +558,7 @@
       return;
     }
     try {
-      player.seekTo(Math.max(0, LINE_AT - 4), true);
+      player.seekTo(Math.max(0, SUNG_AT - 5), true);
     } catch {
       /* ignore */
     }
@@ -516,7 +577,7 @@
     }
     cardArmed = true;
     try {
-      player.seekTo(Math.max(0, LINE_AT - 5), true);
+      player.seekTo(Math.max(0, SUNG_AT - 5), true);
     } catch {
       /* ignore */
     }
