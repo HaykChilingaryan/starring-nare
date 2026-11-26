@@ -33,7 +33,7 @@ window.FILM_CONFIG = {
   // When each word of that line is actually sung, in seconds into the video. The
   // title card follows the song's own clock and reveals each word as it's sung,
   // then shows the English and steps aside about 4 seconds after the last word.
-  lineWordsAt: [51.1, 51.5, 51.7, 52.1, 52.5],
+  lineWordsAt: [49.1, 49.5, 49.7, 50.1, 50.5],
 
   // Opening credits that fade in while the song plays, before 0:48 (seconds)
   credits: [
